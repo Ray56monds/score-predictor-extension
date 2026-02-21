@@ -74,16 +74,25 @@ function extractGames() {
       // Parse odds
       oddsElements.forEach(odd => {
         const text = odd.textContent.toLowerCase();
+        const parentText = odd.parentElement?.textContent?.toLowerCase() || '';
+        const combinedText = text + ' ' + parentText;
         const numbers = text.match(/\d+\.\d+|\d+/g);
         if (!numbers) return;
         
         const value = parseFloat(numbers[0]);
         if (value < 1 || value > 100) return;
         
-        // Over 1.5 detection
-        if ((text.includes('over') || text.includes('o')) && 
-            (text.includes('1.5') || text.includes('1,5'))) {
-          if (!game.over15Odds) game.over15Odds = value;
+        // STRICT Over 1.5 detection - exclude other goal lines
+        const hasOver = combinedText.includes('over') || combinedText.includes('o');
+        const has15 = combinedText.includes('1.5') || combinedText.includes('1,5');
+        const hasOtherGoals = combinedText.includes('0.5') || combinedText.includes('2.5') || 
+                              combinedText.includes('3.5') || combinedText.includes('4.5') ||
+                              combinedText.includes('0,5') || combinedText.includes('2,5') || 
+                              combinedText.includes('3,5') || combinedText.includes('4,5');
+        
+        // Only accept if it's Over 1.5 and NOT other goal lines
+        if (hasOver && has15 && !hasOtherGoals && !game.over15Odds) {
+          game.over15Odds = value;
         }
       });
       
