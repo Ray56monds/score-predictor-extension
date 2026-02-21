@@ -24,6 +24,10 @@ async function loadGames() {
   });
 }
 
+function openTotalGoals() {
+  chrome.tabs.create({ url: 'https://www.betpawa.ug/events/popular?categoryId=2&marketId=Total%20Goals' });
+}
+
 function displayGames() {
   const maxOdds = parseFloat(document.getElementById('maxOdds').value);
   const qualified = allGames.filter(g => g.over15Odds <= maxOdds && g.over15Odds >= 1.0);
@@ -113,6 +117,7 @@ async function debugMode() {
 window.trackGame = trackGame;
 
 document.getElementById('refresh').addEventListener('click', loadGames);
+document.getElementById('openMarket').addEventListener('click', openTotalGoals);
 document.getElementById('debug').addEventListener('click', debugMode);
 document.getElementById('clearStats').addEventListener('click', clearStats);
 document.getElementById('maxOdds').addEventListener('change', displayGames);
