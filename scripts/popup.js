@@ -25,8 +25,8 @@ async function loadGames() {
 }
 
 function displayGames() {
-  const minProb = parseFloat(document.getElementById('minProb').value);
-  const qualified = allGames.filter(g => g.bttsProb >= minProb && g.over15Prob >= minProb);
+  const maxOdds = parseFloat(document.getElementById('maxOdds').value);
+  const qualified = allGames.filter(g => g.over15Odds <= maxOdds && g.over15Odds >= 1.0);
   
   const container = document.getElementById('games');
   
@@ -38,10 +38,9 @@ function displayGames() {
   container.innerHTML = qualified.map(game => `
     <div class="game qualified" data-id="${game.homeTeam}-${game.awayTeam}">
       <div class="match">${game.homeTeam} vs ${game.awayTeam}</div>
-      <div class="odds">BTTS: ${game.bttsOdds.toFixed(2)} | Over 1.5: ${game.over15Odds.toFixed(2)}</div>
+      <div class="odds">Over 1.5: ${game.over15Odds.toFixed(2)}</div>
       <div class="prob">
-        BTTS: ${game.bttsProb.toFixed(1)}% | Over 1.5: ${game.over15Prob.toFixed(1)}%
-        <span class="combined"> | Combined: ${game.combinedProb.toFixed(1)}%</span>
+        Probability: ${game.over15Prob.toFixed(1)}%
       </div>
       <div class="actions">
         <button class="btn" onclick="trackGame('${game.homeTeam}', '${game.awayTeam}', 'won')">Won ✓</button>
@@ -116,7 +115,7 @@ window.trackGame = trackGame;
 document.getElementById('refresh').addEventListener('click', loadGames);
 document.getElementById('debug').addEventListener('click', debugMode);
 document.getElementById('clearStats').addEventListener('click', clearStats);
-document.getElementById('minProb').addEventListener('change', displayGames);
+document.getElementById('maxOdds').addEventListener('change', displayGames);
 
 // Load on popup open
 loadGames();

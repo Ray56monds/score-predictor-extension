@@ -51,7 +51,6 @@ function extractGames() {
       const game = {
         homeTeam: teams[1].trim(),
         awayTeam: teams[2].trim(),
-        bttsOdds: null,
         over15Odds: null,
         timestamp: Date.now()
       };
@@ -79,13 +78,7 @@ function extractGames() {
         if (!numbers) return;
         
         const value = parseFloat(numbers[0]);
-        if (value < 1 || value > 100) return; // Sanity check
-        
-        // BTTS detection
-        if (text.includes('btts') || text.includes('both') || text.includes('gg') || 
-            text.includes('both teams') || text.includes('yes')) {
-          if (!game.bttsOdds) game.bttsOdds = value;
-        }
+        if (value < 1 || value > 100) return;
         
         // Over 1.5 detection
         if ((text.includes('over') || text.includes('o')) && 
@@ -94,12 +87,10 @@ function extractGames() {
         }
       });
       
-      if (game.bttsOdds && game.over15Odds) {
-        game.bttsProb = oddsToProb(game.bttsOdds);
+      if (game.over15Odds) {
         game.over15Prob = oddsToProb(game.over15Odds);
-        game.combinedProb = game.bttsProb * game.over15Prob;
         games.push(game);
-        console.log(`✅ Game ${index + 1}: ${game.homeTeam} vs ${game.awayTeam} - BTTS: ${game.bttsProb.toFixed(1)}%, O1.5: ${game.over15Prob.toFixed(1)}%`);
+        console.log(`✅ Game ${index + 1}: ${game.homeTeam} vs ${game.awayTeam} - O1.5: ${game.over15Odds.toFixed(2)} (${game.over15Prob.toFixed(1)}%)`);
       }
     } catch (e) {
       console.error('❌ Error parsing game:', e);
@@ -147,7 +138,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Auto-highlight qualifying games on page
 function highlightGames() {
   const games = extractGames();
-  const qualified = games.filter(g => g.bttsProb >= 75 && g.over15Prob >= 75);
+  const qualified = games.filter(g => g.over15Odds <= 1.30 && g.over15Odds >= 1.0);
   
   if (qualified.length > 0) {
     chrome.runtime.sendMessage({ 

@@ -5,7 +5,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       type: 'basic',
       iconUrl: 'icons/icon48.png',
       title: 'Qualifying Games Found!',
-      message: `${request.count} game(s) match your criteria (>75% BTTS & Over 1.5)`
+      message: `${request.count} game(s) with Over 1.5 odds <= 1.30`
     });
   }
 });
