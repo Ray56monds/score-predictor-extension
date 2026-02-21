@@ -39,7 +39,7 @@ function displayGames() {
   }
   
   container.innerHTML = qualified.map(game => `
-    <div class="game qualified" data-id="${game.homeTeam}-${game.awayTeam}">
+    <div class="game qualified" data-id="${game.homeTeam}-${game.awayTeam}" data-url="${game.eventUrl || ''}" style="cursor: pointer;">
       <div class="match">${game.homeTeam} vs ${game.awayTeam}</div>
       <div class="odds">Over 1.5: ${game.over15Odds.toFixed(2)}</div>
       <div class="prob">
@@ -51,6 +51,17 @@ function displayGames() {
       </div>
     </div>
   `).join('');
+  
+  // Add click handlers to open game pages
+  container.querySelectorAll('.game').forEach(gameEl => {
+    gameEl.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') return; // Don't trigger on button clicks
+      const url = gameEl.dataset.url;
+      if (url && url !== 'null' && url !== 'undefined') {
+        chrome.tabs.create({ url });
+      }
+    });
+  });
   
   updateStats();
 }

@@ -52,8 +52,15 @@ function extractGames() {
         homeTeam: teams[1].trim(),
         awayTeam: teams[2].trim(),
         over15Odds: null,
+        eventUrl: null,
         timestamp: Date.now()
       };
+      
+      // Extract event URL
+      const link = el.querySelector('a[href*="/event/"]');
+      if (link) {
+        game.eventUrl = link.href;
+      }
       
       // Extract odds with multiple strategies
       const oddsSelectors = [
