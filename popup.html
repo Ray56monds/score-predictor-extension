@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 400px; padding: 10px; font-family: Arial, sans-serif; margin: 0; }
+    h2 { margin: 0 0 10px 0; font-size: 16px; color: #2c3e50; }
+    .filters { background: #ecf0f1; padding: 8px; border-radius: 4px; margin-bottom: 10px; }
+    .filters label { font-size: 12px; margin-right: 10px; }
+    .filters input { width: 50px; }
+    .game { border: 1px solid #bdc3c7; padding: 8px; margin: 5px 0; border-radius: 4px; background: #fff; }
+    .game.qualified { border-color: #27ae60; background: #d5f4e6; }
+    .match { font-weight: bold; font-size: 13px; margin-bottom: 5px; }
+    .odds { font-size: 11px; color: #7f8c8d; }
+    .prob { font-size: 12px; color: #27ae60; font-weight: bold; }
+    .combined { color: #e74c3c; }
+    .stats { background: #3498db; color: white; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 12px; }
+    .btn { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; margin: 2px; }
+    .btn:hover { background: #2980b9; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .empty { text-align: center; color: #95a5a6; padding: 20px; font-size: 12px; }
+    .actions { margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h2>⚽ Score Predictor</h2>
+  
+  <div class="filters">
+    <label>Min %: <input type="number" id="minProb" value="75" min="0" max="100"></label>
+    <button class="btn" id="refresh">Refresh</button>
+    <button class="btn" id="debug">Debug</button>
+    <button class="btn btn-danger" id="clearStats">Clear Stats</button>
+  </div>
+
+  <div class="stats" id="stats">
+    <div>Tracked: <span id="tracked">0</span> | Won: <span id="won">0</span> | Lost: <span id="lost">0</span> | Win Rate: <span id="winRate">0%</span></div>
+  </div>
+
+  <div id="games"></div>
+
+  <script src="scripts/popup.js"></script>
+</body>
+</html>
