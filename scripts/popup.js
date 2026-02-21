@@ -29,8 +29,7 @@ function openTotalGoals() {
 }
 
 function displayGames() {
-  const maxOdds = parseFloat(document.getElementById('maxOdds').value);
-  const qualified = allGames.filter(g => g.over15Odds <= maxOdds && g.over15Odds >= 1.0);
+  const qualified = allGames.filter(g => g.over15Odds >= 1.0);
   
   const container = document.getElementById('games');
   
@@ -120,7 +119,6 @@ document.getElementById('refresh').addEventListener('click', loadGames);
 document.getElementById('openMarket').addEventListener('click', openTotalGoals);
 document.getElementById('debug').addEventListener('click', debugMode);
 document.getElementById('clearStats').addEventListener('click', clearStats);
-document.getElementById('maxOdds').addEventListener('change', displayGames);
 
 // Load on popup open
 loadGames();

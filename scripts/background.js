@@ -4,8 +4,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'icons/icon48.png',
-      title: 'Qualifying Games Found!',
-      message: `${request.count} game(s) with Over 1.5 odds <= 1.30`
+      title: 'Over 1.5 Goals Found!',
+      message: `${request.count} game(s) with Over 1.5 odds available`
     });
   }
 });

@@ -147,7 +147,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Auto-highlight qualifying games on page
 function highlightGames() {
   const games = extractGames();
-  const qualified = games.filter(g => g.over15Odds <= 1.30 && g.over15Odds >= 1.0);
+  const qualified = games.filter(g => g.over15Odds >= 1.0);
   
   if (qualified.length > 0) {
     chrome.runtime.sendMessage({ 
