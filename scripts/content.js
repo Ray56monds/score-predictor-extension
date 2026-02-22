@@ -12,7 +12,10 @@ function extractGames() {
     '[class*="fixture"]',
     'div[class*="sport"] > div',
     '.event-row',
-    '.match-row'
+    '.match-row',
+    'a[href*="/event/"]',
+    '[class*="EventRow"]',
+    '[class*="Event"]'
   ];
   
   let gameElements = [];
@@ -33,17 +36,24 @@ function extractGames() {
     try {
       const fullText = el.textContent || '';
       
+      // Extract event URL first
+      let eventUrl = null;
+      const link = el.querySelector('a[href*="/event/"]') || (el.tagName === 'A' ? el : null);
+      if (link && link.href) {
+        eventUrl = link.href;
+      }
+      
       // Multiple patterns for team extraction
       const teamPatterns = [
         /([A-Za-z][A-Za-z\s.'-]+?)\s+(?:vs?\.?|v|-)\s+([A-Za-z][A-Za-z\s.'-]+)/i,
-        /([A-Za-z\s]+)\s*-\s*([A-Za-z\s]+)/,
-        /([A-Za-z\s]+)\s+([A-Za-z\s]+)/
+        /([A-Z][A-Za-z\s]+?)\s*-\s*([A-Z][A-Za-z\s]+)/,
+        /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/
       ];
       
       let teams = null;
       for (const pattern of teamPatterns) {
         teams = fullText.match(pattern);
-        if (teams && teams[1] && teams[2]) break;
+        if (teams && teams[1] && teams[2] && teams[1].length > 2 && teams[2].length > 2) break;
       }
       
       if (!teams || !teams[1] || !teams[2]) return;
@@ -52,15 +62,9 @@ function extractGames() {
         homeTeam: teams[1].trim(),
         awayTeam: teams[2].trim(),
         over15Odds: null,
-        eventUrl: null,
+        eventUrl: eventUrl,
         timestamp: Date.now()
       };
-      
-      // Extract event URL
-      const link = el.querySelector('a[href*="/event/"]');
-      if (link) {
-        game.eventUrl = link.href;
-      }
       
       // Extract odds with multiple strategies
       const oddsSelectors = [
@@ -68,8 +72,11 @@ function extractGames() {
         '[class*="coef"]',
         '[class*="price"]',
         '[class*="rate"]',
+        '[class*="Odd"]',
+        '[class*="Price"]',
         'button',
-        'span[class*="value"]'
+        'span[class*="value"]',
+        'div[class*="value"]'
       ];
       
       let oddsElements = [];
@@ -78,11 +85,16 @@ function extractGames() {
         if (oddsElements.length > 0) break;
       }
       
-      // Parse odds
+      // Also check all text nodes for odds patterns
+      const allText = fullText.toLowerCase();
+      
+      // Parse odds from elements
       oddsElements.forEach(odd => {
         const text = odd.textContent.toLowerCase();
         const parentText = odd.parentElement?.textContent?.toLowerCase() || '';
-        const combinedText = text + ' ' + parentText;
+        const grandParentText = odd.parentElement?.parentElement?.textContent?.toLowerCase() || '';
+        const combinedText = text + ' ' + parentText + ' ' + grandParentText;
+        
         const numbers = text.match(/\d+\.\d+|\d+/g);
         if (!numbers) return;
         
@@ -90,18 +102,34 @@ function extractGames() {
         if (value < 1 || value > 100) return;
         
         // STRICT Over 1.5 detection - exclude other goal lines
-        const hasOver = combinedText.includes('over') || combinedText.includes('o');
-        const has15 = combinedText.includes('1.5') || combinedText.includes('1,5');
+        const hasOver = combinedText.includes('over') || combinedText.includes('o') || combinedText.includes('>');
+        const has15 = combinedText.includes('1.5') || combinedText.includes('1,5') || combinedText.includes('15');
         const hasOtherGoals = combinedText.includes('0.5') || combinedText.includes('2.5') || 
                               combinedText.includes('3.5') || combinedText.includes('4.5') ||
                               combinedText.includes('0,5') || combinedText.includes('2,5') || 
-                              combinedText.includes('3,5') || combinedText.includes('4,5');
+                              combinedText.includes('3,5') || combinedText.includes('4,5') ||
+                              combinedText.includes('05') || combinedText.includes('25') ||
+                              combinedText.includes('35') || combinedText.includes('45');
         
         // Only accept if it's Over 1.5 and NOT other goal lines
         if (hasOver && has15 && !hasOtherGoals && !game.over15Odds) {
           game.over15Odds = value;
+          console.log(`   Found Over 1.5 odds: ${value} in text: "${text}"`);
         }
       });
+      
+      // Alternative: Parse directly from full text using regex
+      if (!game.over15Odds) {
+        const over15Pattern = /(?:over|o|>)\s*1[.,]5[^\d]*?(\d+\.\d+)/i;
+        const match = allText.match(over15Pattern);
+        if (match && match[1]) {
+          const value = parseFloat(match[1]);
+          if (value >= 1 && value <= 100) {
+            game.over15Odds = value;
+            console.log(`   Found Over 1.5 odds via regex: ${value}`);
+          }
+        }
+      }
       
       if (game.over15Odds) {
         game.over15Prob = oddsToProb(game.over15Odds);
