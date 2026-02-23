@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Over 1.5 Goals Finder - Standalone</title>
+  <style>
+    body { width: 400px; padding: 10px; font-family: Arial, sans-serif; margin: 0; }
+    h2 { margin: 0 0 10px 0; font-size: 16px; color: #2c3e50; }
+    .filters { background: #ecf0f1; padding: 8px; border-radius: 4px; margin-bottom: 10px; }
+    .game { border: 1px solid #bdc3c7; padding: 8px; margin: 5px 0; border-radius: 4px; background: #fff; cursor: pointer; transition: transform 0.2s; }
+    .game:hover { transform: scale(1.02); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .game.qualified { border-color: #27ae60; background: #d5f4e6; }
+    .match { font-weight: bold; font-size: 13px; margin-bottom: 5px; }
+    .odds { font-size: 11px; color: #7f8c8d; }
+    .prob { font-size: 12px; color: #27ae60; font-weight: bold; }
+    .stats { background: #3498db; color: white; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 12px; }
+    .btn { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; margin: 2px; }
+    .btn:hover { background: #2980b9; }
+    .btn-danger { background: #e74c3c; }
+    .btn-danger:hover { background: #c0392b; }
+    .empty { text-align: center; color: #95a5a6; padding: 20px; font-size: 12px; }
+    .actions { margin-top: 5px; }
+    a { color: #3498db; }
+  </style>
+</head>
+<body>
+  <h2>⚽ Over 1.5 Goals Finder</h2>
+  
+  <div class="filters">
+    <button class="btn" id="refresh">Refresh</button>
+    <button class="btn btn-danger" id="clearStats">Clear Stats</button>
+  </div>
+
+  <div class="stats" id="stats">
+    <div>Tracked: <span id="tracked">0</span> | Won: <span id="won">0</span> | Lost: <span id="lost">0</span> | Win Rate: <span id="winRate">0%</span></div>
+  </div>
+
+  <div id="games"></div>
+
+  <script src="scripts/popup-standalone.js"></script>
+</body>
+</html>
