@@ -155,9 +155,42 @@ async function clearStats() {
   }
 }
 
+function toggleCalculator() {
+  const calcSection = document.getElementById('calcSection');
+  calcSection.style.display = calcSection.style.display === 'none' ? 'block' : 'none';
+}
+
+function calculateOdds() {
+  const totalOdds = parseFloat(document.getElementById('totalOdds').value);
+  const numGames = parseInt(document.getElementById('numGames').value);
+  const resultDiv = document.getElementById('calcResult');
+  
+  if (!totalOdds || !numGames || totalOdds <= 1 || numGames < 1) {
+    resultDiv.innerHTML = '<span style="color: #e74c3c;">⚠️ Please enter valid values</span>';
+    return;
+  }
+  
+  // Calculate individual odds: totalOdds = odds1 × odds2 × odds3...
+  // If all games have same odds: individualOdds = totalOdds^(1/numGames)
+  const individualOdds = Math.pow(totalOdds, 1 / numGames);
+  
+  resultDiv.innerHTML = `
+    <div style="font-weight: bold; margin-bottom: 5px;">✅ Result:</div>
+    <div>Each game odds: <strong>${individualOdds.toFixed(2)}</strong></div>
+    <div style="margin-top: 5px; font-size: 10px; color: #7f8c8d;">
+      Verification: ${individualOdds.toFixed(2)} × ${numGames} games = ${totalOdds.toFixed(2)}
+    </div>
+    <div style="margin-top: 5px; padding: 5px; background: #d5f4e6; border-radius: 3px;">
+      <strong>Find games with odds around ${individualOdds.toFixed(2)}</strong>
+    </div>
+  `;
+}
+
 window.trackGame = trackGame;
 
 document.getElementById('refresh').addEventListener('click', loadGames);
+document.getElementById('calculator').addEventListener('click', toggleCalculator);
+document.getElementById('calculate').addEventListener('click', calculateOdds);
 document.getElementById('clearStats').addEventListener('click', clearStats);
 
 loadGames();

@@ -16,6 +16,8 @@
     .stats { background: #3498db; color: white; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 12px; }
     .btn { background: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; margin: 2px; }
     .btn:hover { background: #2980b9; }
+    .btn-success { background: #27ae60; }
+    .btn-success:hover { background: #229954; }
     .btn-danger { background: #e74c3c; }
     .btn-danger:hover { background: #c0392b; }
     .empty { text-align: center; color: #95a5a6; padding: 20px; font-size: 12px; }
@@ -28,7 +30,20 @@
   
   <div class="filters">
     <button class="btn" id="refresh">Refresh</button>
+    <button class="btn" id="calculator">Odds Calculator</button>
     <button class="btn btn-danger" id="clearStats">Clear Stats</button>
+  </div>
+
+  <div id="calcSection" style="display: none; background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+    <div style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">📊 Odds Calculator</div>
+    <div style="margin-bottom: 8px;">
+      <label style="font-size: 11px;">Total Odds: <input type="number" id="totalOdds" step="0.01" placeholder="e.g., 5.50" style="width: 80px; padding: 4px;"></label>
+    </div>
+    <div style="margin-bottom: 8px;">
+      <label style="font-size: 11px;">Number of Games: <input type="number" id="numGames" min="1" placeholder="e.g., 3" style="width: 80px; padding: 4px;"></label>
+    </div>
+    <button class="btn" id="calculate" style="width: 100%;">Calculate</button>
+    <div id="calcResult" style="margin-top: 8px; font-size: 11px; color: #27ae60;"></div>
   </div>
 
   <div class="stats" id="stats">
