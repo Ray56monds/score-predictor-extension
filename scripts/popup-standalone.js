@@ -7,7 +7,7 @@ async function loadGames() {
   try {
     // Using The Odds API (free tier: 500 requests/month)
     // Get your free API key at: https://the-odds-api.com/
-    const apiKey = 'YOUR_API_KEY_HERE'; // User needs to add their key
+    const apiKey = '8028a556094d0e2be461db4675019b2b';
     
     if (apiKey === 'YOUR_API_KEY_HERE') {
       document.getElementById('games').innerHTML = `

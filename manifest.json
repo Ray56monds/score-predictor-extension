@@ -1,21 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Over 1.5 Goals Finder",
-  "version": "1.0",
-  "description": "Finds all games with Over 1.5 goals odds",
-  "permissions": ["storage", "notifications", "activeTab", "tabs"],
-  "host_permissions": ["https://www.betpawa.ug/*"],
+  "name": "Over 1.5 Goals Finder - Standalone",
+  "version": "2.0",
+  "description": "Standalone extension that fetches Over 1.5 goals odds from API",
+  "permissions": ["storage", "notifications"],
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup-standalone.html",
     "default_icon": "icons/icon48.png"
-  },
-  "content_scripts": [{
-    "matches": ["https://www.betpawa.ug/*"],
-    "js": ["scripts/content.js"],
-    "run_at": "document_idle"
-  }],
-  "background": {
-    "service_worker": "scripts/background.js"
   },
   "icons": {
     "16": "icons/icon16.png",
