@@ -164,9 +164,11 @@ function calculateOdds() {
   const totalOdds = parseFloat(document.getElementById('totalOdds').value);
   const numGames = parseInt(document.getElementById('numGames').value);
   const resultDiv = document.getElementById('calcResult');
+  const teamSearchSection = document.getElementById('teamSearchSection');
   
   if (!totalOdds || !numGames || totalOdds <= 1 || numGames < 1) {
     resultDiv.innerHTML = '<span style="color: #e74c3c;">⚠️ Please enter valid values</span>';
+    teamSearchSection.style.display = 'none';
     return;
   }
   
@@ -184,6 +186,63 @@ function calculateOdds() {
       <strong>Find games with odds around ${individualOdds.toFixed(2)}</strong>
     </div>
   `;
+  
+  // Show team search section
+  teamSearchSection.style.display = 'block';
+  generateTeamInputs(numGames, individualOdds);
+}
+
+function generateTeamInputs(numGames, targetOdds) {
+  const container = document.getElementById('teamInputs');
+  let html = '';
+  
+  for (let i = 1; i <= numGames; i++) {
+    html += `
+      <div style="margin-bottom: 5px;">
+        <input type="text" id="team${i}" placeholder="Game ${i}: Team name" 
+               style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #bdc3c7; border-radius: 3px;">
+      </div>
+    `;
+  }
+  
+  container.innerHTML = html;
+  container.dataset.targetOdds = targetOdds;
+}
+
+function searchTeams() {
+  const numGames = parseInt(document.getElementById('numGames').value);
+  const targetOdds = document.getElementById('teamInputs').dataset.targetOdds;
+  const teams = [];
+  
+  for (let i = 1; i <= numGames; i++) {
+    const teamInput = document.getElementById(`team${i}`);
+    if (teamInput && teamInput.value.trim()) {
+      teams.push(teamInput.value.trim());
+    }
+  }
+  
+  if (teams.length === 0) {
+    alert('⚠️ Please enter at least one team name');
+    return;
+  }
+  
+  // Filter loaded games by team names and target odds
+  const matchedGames = allGames.filter(game => {
+    const teamMatch = teams.some(team => 
+      game.homeTeam.toLowerCase().includes(team.toLowerCase()) ||
+      game.awayTeam.toLowerCase().includes(team.toLowerCase())
+    );
+    const oddsMatch = Math.abs(game.over15Odds - parseFloat(targetOdds)) <= 0.3; // Within 0.3 of target
+    return teamMatch && oddsMatch;
+  });
+  
+  if (matchedGames.length > 0) {
+    allGames = matchedGames;
+    displayGames();
+    document.getElementById('calcSection').style.display = 'none';
+  } else {
+    alert(`❌ No games found matching:\n- Teams: ${teams.join(', ')}\n- Target odds: ${targetOdds}\n\nTry clicking "Refresh" first or adjust team names.`);
+  }
 }
 
 window.trackGame = trackGame;
@@ -191,6 +250,7 @@ window.trackGame = trackGame;
 document.getElementById('refresh').addEventListener('click', loadGames);
 document.getElementById('calculator').addEventListener('click', toggleCalculator);
 document.getElementById('calculate').addEventListener('click', calculateOdds);
+document.getElementById('searchTeams').addEventListener('click', searchTeams);
 document.getElementById('clearStats').addEventListener('click', clearStats);
 
 loadGames();
